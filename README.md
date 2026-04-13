@@ -58,57 +58,115 @@ flowchart LR
 
 ```bash
 bigdata-project/
-|-- alerts/
-|   `-- transportation_alert.py
-|-- analytics/
-|   |-- transportation_analytics.py
-|   `-- traffic_ml_model_v1.py            # Week 7: training model prediksi traffic
-|-- dashboard/
-|   |-- dashboard_streamlit.py
-|   |-- dashboard_transportation.py
-|   `-- traffic_dashboard_v1.py           # Week 7: dashboard prediksi traffic
+|-- .venv/                                         # Virtual environment lokal
+|-- alerts/                                        # Modul alert untuk use case transportation
+|   |-- __init__.py
+|   `-- transportation_alert.py                    # Rule-based alert (traffic/fare)
+|-- analytics/                                     # Modul analytics & machine learning
+|   |-- __init__.py
+|   |-- transportation_analytics.py                # KPI, trend, anomaly detection (Week 6)
+|   `-- traffic_ml_model_v1.py                     # Training model prediksi traffic (Week 7)
+|-- dashboard/                                     # Aplikasi dashboard Streamlit
+|   |-- dashboard_streamlit.py                     # Dashboard real-time e-commerce
+|   |-- dashboard_transportation.py                # Dashboard decision-oriented transportation
+|   `-- traffic_dashboard_v1.py                    # Dashboard prediksi traffic (Week 7)
 |-- data/
-|   |-- raw/
-|   |   |-- ecommerce_raw.csv
-|   |   `-- traffic_smartcity_v1.csv      # Dataset Week 7 (raw)
-|   |-- clean/
+|   |-- checkpoints/                               # Spark streaming checkpoint
+|   |   `-- transportation/
+|   |-- clean/                                     # Data hasil cleaning
 |   |   `-- traffic_smartcity_clean_v1.csv
-|   |-- serving/
-|   |   |-- stream/
-|   |   |-- transportation/
-|   |   |-- total_revenue/
-|   |   |-- top_products/
-|   |   |-- category_revenue/
-|   |   `-- avg_transaction/
-|   |-- curated/
-|   `-- checkpoints/
-|-- models/
-|   `-- traffic_model_v1.pkl              # Artifact model Week 7
-|-- scripts/
-|   |-- batch_pipeline_enterprise.py
-|   |-- streaming_layer.py
-|   |-- analytics_layer.py
-|   |-- transaction_generator.py
-|   |-- traffic_data_cleaning_v1.py       # Week 7: preprocessing traffic
-|   `-- transportation/
-|       |-- trip_generator.py
-|       `-- streaming_trip_layer.py
-|-- stream_data/
-|   `-- transportation/
+|   |-- curated/                                   # Data agregasi bisnis (Week 6)
+|   |-- raw/
+|   |   |-- ecommerce_raw.csv                      # Dataset mentah utama batch
+|   |   `-- traffic_smartcity_v1.csv               # Dataset traffic smart city (Week 7)
+|   `-- serving/                                   # Data siap konsumsi dashboard
+|       |-- avg_transaction/
+|       |-- category_revenue/
+|       |-- stream/                                # Output streaming e-commerce
+|       |-- top_products/
+|       |-- total_revenue/
+|       `-- transportation/                        # Output streaming transportation
 |-- logs/
-|-- screenshots/
+|   |-- batch_pipeline.log                         # Log proses batch pipeline
+|   `-- stream_checkpoint/                         # Checkpoint streaming e-commerce
+|-- models/
+|   `-- traffic_model_v1.pkl                       # Artifact model prediksi traffic (Week 7)
+|-- screenshots/                                   # Screenshot dokumentasi hasil praktikum
 |   |-- struktur_project.png
 |   |-- scripts_cleaning.png
+|   |-- data_cleaning_selesai.png
 |   |-- scripts_modeling.png
+|   |-- model_berhasil_disimpan.png
 |   |-- scripts_dashboard.png
+|   |-- dashboard_berjalan.png
 |   |-- dashboard_1.png
 |   |-- dashboard_2.png
 |   `-- nilai_prediksi.png
+|-- scripts/                                       # Pipeline utama praktikum
+|   |-- analytics_layer.py                         # Analytics + serving layer (e-commerce)
+|   |-- batch_pipeline_enterprise.py               # Batch processing pipeline
+|   |-- streaming_layer.py                         # Streaming ingestion e-commerce
+|   |-- transaction_generator.py                   # Generator transaksi e-commerce
+|   |-- traffic_data_cleaning_v1.py                # Data cleaning traffic (Week 7)
+|   `-- transportation/
+|       |-- streaming_trip_layer.py                # Streaming ingestion transportation
+|       `-- trip_generator.py                      # Generator trip transportation
+|-- stream_data/                                   # Input simulasi data streaming
+|   `-- transportation/
 |-- .gitignore
 |-- CONTRIBUTING.md
 |-- LICENSE
 `-- README.md
 ```
+
+## Bukti Screenshots
+
+<table>
+<tr>
+<td align="center"><b>Struktur Project</b></td>
+<td align="center"><b>Scripts Cleaning</b></td>
+</tr>
+<tr>
+<td><img src="screenshots/struktur_project.png"/></td>
+<td><img src="screenshots/scripts_cleaning.png"/></td>
+</tr>
+
+<tr>
+<td align="center"><b>Data Cleaning Selesai</b></td>
+<td align="center"><b>Scripts Modeling</b></td>
+</tr>
+<tr>
+<td><img src="screenshots/data_cleaning_selesai.png"/></td>
+<td><img src="screenshots/scripts_modeling.png"/></td>
+</tr>
+
+<tr>
+<td align="center"><b>Model Berhasil Disimpan</b></td>
+<td align="center"><b>Scripts Dashboard</b></td>
+</tr>
+<tr>
+<td><img src="screenshots/model_berhasil_disimpan.png"/></td>
+<td><img src="screenshots/scripts_dashboard.png"/></td>
+</tr>
+
+<tr>
+<td align="center"><b>Dashboard Berjalan</b></td>
+<td align="center"><b>Dashboard 1</b></td>
+</tr>
+<tr>
+<td><img src="screenshots/dashboard_berjalan.png"/></td>
+<td><img src="screenshots/dashboard_1.png"/></td>
+</tr>
+
+<tr>
+<td align="center"><b>Dashboard 2</b></td>
+<td align="center"><b>Nilai Prediksi</b></td>
+</tr>
+<tr>
+<td><img src="screenshots/dashboard_2.png"/></td>
+<td><img src="screenshots/nilai_prediksi.png"/></td>
+</tr>
+</table>
 
 ## Dataset Week 7
 
@@ -236,15 +294,6 @@ Praktikum dianggap berhasil jika:
 3. Dashboard terbuka tanpa error dan menampilkan metrik serta grafik trend.
 4. Tombol prediksi menghasilkan nilai prediksi kendaraan dari input pengguna.
 
-## Bukti Implementasi (Screenshots)
-
-![Struktur Proyek](screenshots/struktur_project.png)
-![Script Cleaning](screenshots/scripts_cleaning.png)
-![Script Modeling](screenshots/scripts_modeling.png)
-![Script Dashboard](screenshots/scripts_dashboard.png)
-![Dashboard 1](screenshots/dashboard_1.png)
-![Dashboard 2](screenshots/dashboard_2.png)
-![Nilai Prediksi](screenshots/nilai_prediksi.png)
 
 ## Integrasi Dengan Praktikum 6
 
@@ -278,3 +327,6 @@ Pendekatan ini merepresentasikan alur smart city data platform yang lebih lengka
 ## Penutup
 
 Week 7 berhasil memperluas fondasi Week 6 dari sekadar monitoring real-time menjadi sistem yang mulai memiliki kemampuan prediktif. Hasilnya, repository ini kini lebih siap digunakan sebagai prototipe **Smart City AI** yang menggabungkan ingestion, analytics, visualisasi, dan prediksi traffic dalam satu alur terpadu.
+
+
+
