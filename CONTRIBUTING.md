@@ -1,125 +1,191 @@
 # Panduan Kontribusi
 
-Terima kasih sudah berkontribusi pada project **Praktikum Big Data Week 6: Real-Time Analytics & Visualisasi Data Skala Besar**.
+Terima kasih sudah berkontribusi pada project **Praktikum Big Data Week 7: Machine Learning untuk Prediksi Traffic (Smart City AI)**.
 
-Dokumen ini menjelaskan cara menambahkan fitur, memperbaiki bug, dan menjaga kualitas kode agar pipeline real-time tetap stabil.
+Repository ini sekarang mencakup:
+
+1. Komponen **Week 6**: batch/streaming analytics, dashboard, dan alert transportation.
+2. Komponen **Week 7**: data cleaning, training model ML, dan dashboard prediksi traffic.
+
+Dokumen ini membantu kita menjaga kualitas kontribusi agar perubahan tetap rapi, mudah direview, dan tidak merusak pipeline yang sudah berjalan.
+
+## Prinsip Kontribusi
+
+1. Perubahan harus **jelas scope-nya** (fokus pada satu topik per PR).
+2. Perubahan harus **reproducible** (ada langkah menjalankan dan validasi).
+3. Perubahan harus **aman terhadap modul lain** (hindari regression antar Week 6 dan Week 7).
+4. Dokumentasi harus ikut diupdate jika command, path, atau behavior berubah.
 
 ## Ruang Lingkup Kontribusi
 
-Kontribusi yang diterima mencakup:
+Kontribusi yang diterima:
 
-1. Perbaikan bug pada pipeline batch/streaming.
-2. Peningkatan dashboard real-time (visualisasi, performa, UX).
-3. Penyempurnaan modul analytics dan alert transportation.
-4. Perbaikan dokumentasi (`README.md`, panduan praktikum, catatan troubleshooting).
-5. Refactor kode agar lebih rapi tanpa mengubah perilaku sistem.
+1. Perbaikan bug pipeline batch, streaming, analytics, dashboard, atau alert.
+2. Peningkatan kualitas model traffic (fitur, evaluasi, pelatihan, inferensi).
+3. Peningkatan UX/dashboard visual untuk observability dan prediksi.
+4. Peningkatan kualitas data pipeline (cleaning, validasi skema, data quality checks).
+5. Refactor kode agar lebih maintainable tanpa mengubah behavior secara tidak sengaja.
+6. Peningkatan dokumentasi (`README.md`, `CONTRIBUTING.md`, troubleshooting, runbook).
 
-## Struktur Project yang Perlu Dipahami
+## Area Project yang Umum Diubah
 
-Folder inti yang paling sering disentuh:
-
-1. `scripts/`: batch pipeline, generator, dan streaming layer.
-2. `analytics/`: fungsi analitik transportation (metrics, trend, anomaly).
-3. `alerts/`: rule-based alert.
-4. `dashboard/`: tampilan Streamlit untuk e-commerce dan transportation.
-5. `data/` dan `stream_data/`: output pipeline dan data simulasi (hindari commit data besar/temporary file).
+1. `scripts/`
+   - Week 6: batch/streaming generator & processing.
+   - Week 7: `traffic_data_cleaning_v1.py`.
+2. `analytics/`
+   - Week 6: analytics transportation.
+   - Week 7: `traffic_ml_model_v1.py`.
+3. `dashboard/`
+   - Week 6: dashboard e-commerce & transportation.
+   - Week 7: `traffic_dashboard_v1.py`.
+4. `models/`
+   - Artifact model (`traffic_model_v1.pkl`) bila ada update baseline model.
+5. `data/`
+   - `raw/`, `clean/`, `serving/`, `curated/`, `checkpoints/`.
+6. `alerts/`
+   - Rule-based alert transportation (Week 6).
 
 ## Setup Development
 
-1. Buat virtual environment:
+### 1) Buat Virtual Environment
+
+Linux/macOS:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 ```
 
-Untuk PowerShell:
+PowerShell:
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 ```
 
-2. Install dependency:
+### 2) Install Dependency
 
 ```bash
-pip install pyspark streamlit pandas pyarrow
+pip install pandas scikit-learn joblib streamlit matplotlib pyspark pyarrow
 ```
 
-3. Pastikan Java tersedia:
+### 3) Validasi Environment
+
+```bash
+python --version
+pip --version
+```
+
+Opsional untuk pipeline Spark Week 6:
 
 ```bash
 java -version
 ```
 
-## Alur Kontribusi
+## Alur Kontribusi (Workflow)
 
 1. Buat branch baru dari branch utama.
-2. Lakukan perubahan secara fokus pada satu topik (misal: only dashboard, only analytics, atau only docs).
-3. Uji perubahan secara lokal.
-4. Commit dengan pesan yang jelas.
-5. Buat Pull Request berisi ringkasan perubahan dan cara verifikasi.
+2. Gunakan nama branch yang deskriptif.
+3. Lakukan perubahan kecil dan fokus pada satu concern.
+4. Jalankan validasi lokal sesuai area yang diubah.
+5. Commit dengan pesan yang jelas.
+6. Push branch lalu buka Pull Request.
+7. Sertakan ringkasan, langkah verifikasi, dan risiko perubahan.
+
+Contoh pola nama branch:
+
+- `feature/traffic-model-evaluation`
+- `fix/dashboard-traffic-empty-data`
+- `docs/update-week7-contributing`
 
 ## Standar Penulisan Kode
 
-1. Gunakan Python yang mudah dibaca dan konsisten.
-2. Nama variabel/fungsi harus deskriptif.
-3. Hindari hardcode yang tidak perlu.
-4. Tambahkan komentar singkat hanya pada bagian logika yang kompleks.
-5. Jangan mengubah behavior pipeline lain jika tidak terkait scope pekerjaan.
+1. Gunakan Python yang readable dan konsisten.
+2. Gunakan nama variabel/fungsi yang deskriptif.
+3. Hindari hardcode path atau nilai threshold tanpa alasan jelas.
+4. Tambahkan komentar singkat hanya untuk logika yang tidak langsung obvious.
+5. Hindari perubahan lintas modul yang tidak diperlukan oleh scope.
+6. Jika menambah dependency baru, jelaskan alasan dan dampaknya di PR.
 
-## Standar untuk Pipeline Real-Time
+## Standar Data, Model, dan Artifact
 
-Saat mengubah komponen real-time, pastikan:
+1. Jangan commit kredensial, data sensitif, atau informasi personal.
+2. Hindari commit file temporary/eksperimen lokal yang tidak dibutuhkan.
+3. Jika mengubah dataset atau preprocessing, jelaskan skema dan dampaknya.
+4. Jika mengubah model (`traffic_model_v1.pkl`), sertakan:
+   - perubahan fitur/algoritma,
+   - cara training,
+   - hasil validasi ringkas.
+5. Jaga kompatibilitas path agar dashboard dan script lain tidak rusak.
 
-1. Generator tetap menghasilkan data JSON valid.
-2. Streaming consumer tetap bisa menulis ke path serving yang sesuai.
-3. Dashboard tidak crash saat data masih kosong.
-4. Interval refresh/trigger tetap wajar (tidak terlalu agresif).
-5. Perubahan tetap kompatibel dengan folder checkpoint yang sudah digunakan.
+## Quality Gate Sebelum Pull Request
 
-## Validasi Sebelum Pull Request
+Lakukan pengecekan minimal ini:
 
-Lakukan pengecekan berikut sebelum mengirim PR:
+1. Tidak ada import error saat script dijalankan.
+2. Command utama untuk area yang diubah berhasil dijalankan.
+3. Output penting terbentuk di path yang diharapkan.
+4. Dashboard tetap bisa dibuka tanpa crash.
+5. Dokumen terkait sudah diupdate jika command/path berubah.
 
-1. Jalankan pipeline yang terdampak, minimal satu skenario end-to-end.
-2. Pastikan dashboard bisa dibuka dan menampilkan data.
-3. Pastikan tidak ada import error atau path error.
-4. Pastikan dokumentasi ikut diperbarui jika ada perubahan command/path/fitur.
-5. Pastikan file temporary tidak ikut ter-commit.
+### Validasi Minimal Week 7 (Jika Mengubah ML Traffic)
 
-## Konvensi Commit (Disarankan)
+```bash
+python scripts/traffic_data_cleaning_v1.py
+python analytics/traffic_ml_model_v1.py
+streamlit run dashboard/traffic_dashboard_v1.py
+```
 
-Gunakan format sederhana berikut:
+Checklist hasil:
+
+1. `data/clean/traffic_smartcity_clean_v1.csv` terbentuk.
+2. `models/traffic_model_v1.pkl` terbentuk.
+3. Dashboard menampilkan KPI, trend, dan prediksi.
+
+### Validasi Minimal Week 6 (Jika Mengubah Streaming/Transportation)
+
+1. Generator tetap menghasilkan data valid.
+2. Streaming consumer tetap menulis data ke serving layer.
+3. Dashboard transportation tetap menampilkan data.
+4. Alert/anomaly logic tidak regress.
+
+## Konvensi Commit
+
+Gunakan format berikut:
 
 - `feat: ...` untuk fitur baru
-- `fix: ...` untuk perbaikan bug
+- `fix: ...` untuk bug fix
 - `refactor: ...` untuk perapian kode
-- `docs: ...` untuk perubahan dokumentasi
-- `chore: ...` untuk perubahan pendukung non-fungsional
+- `docs: ...` untuk dokumentasi
+- `chore: ...` untuk pekerjaan pendukung
 
 Contoh:
 
-- `feat: add window aggregation chart for transportation dashboard`
-- `fix: handle empty parquet files in streamlit dashboard`
-- `docs: update README and contributing for week 6`
+- `feat: add traffic model evaluation metrics section`
+- `fix: handle empty clean traffic dataset in dashboard`
+- `docs: update contributing guide for week 7`
 
 ## Pull Request Checklist
 
-Saat membuka PR, mohon sertakan:
+Saat membuka PR, sertakan:
 
-1. Ringkasan singkat perubahan.
-2. Area yang terdampak (`scripts`, `dashboard`, `analytics`, dll).
-3. Cara menjalankan/mengetes perubahan.
-4. Screenshot (jika perubahan visual dashboard).
-5. Catatan risiko atau dampak ke pipeline lain (jika ada).
+1. Ringkasan perubahan.
+2. Area/folder yang terdampak.
+3. Langkah verifikasi yang dijalankan.
+4. Screenshot untuk perubahan visual dashboard.
+5. Risiko, asumsi, atau dampak kompatibilitas (jika ada).
+6. Catatan follow-up task (jika perubahan bertahap).
 
-## Catatan Penting
+## Pelaporan Bug dan Permintaan Fitur
 
-1. Jangan commit kredensial, file sensitif, atau data pribadi.
-2. Hindari commit file output besar dari stream/batch yang tidak dibutuhkan.
-3. Jika melakukan perubahan besar, pecah menjadi beberapa commit agar mudah direview.
+Agar issue cepat diproses, sertakan:
+
+1. Deskripsi masalah/tujuan secara singkat.
+2. Langkah reproduksi.
+3. Perilaku yang diharapkan vs aktual.
+4. Log error relevan (jika ada).
+5. Environment singkat (OS, versi Python, dependency utama).
 
 ---
 
-Dengan mengikuti panduan ini, kolaborasi akan lebih rapi, perubahan lebih mudah direview, dan stabilitas project Week 6 tetap terjaga.
+Dengan mengikuti panduan ini, kontribusi akan lebih konsisten, proses review lebih cepat, dan kualitas sistem Week 6 + Week 7 tetap terjaga.
