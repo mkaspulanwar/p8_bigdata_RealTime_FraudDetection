@@ -1,49 +1,54 @@
-# Panduan Kontribusi
+﻿# Panduan Kontribusi
 
-Terima kasih sudah berkontribusi pada project **Praktikum Big Data Week 7: Machine Learning untuk Prediksi Traffic (Smart City AI)**.
+Terima kasih sudah berkontribusi pada project **Praktikum Big Data Week 8: Keamanan dan Privasi Big Data (Real-Time Fraud Detection)**.
 
 Repository ini sekarang mencakup:
 
 1. Komponen **Week 6**: batch/streaming analytics, dashboard, dan alert transportation.
 2. Komponen **Week 7**: data cleaning, training model ML, dan dashboard prediksi traffic.
+3. Komponen **Week 8**: Kafka producer, Spark Structured Streaming, masking data sensitif, encoding/encryption demonstratif, dan dashboard fraud real-time.
 
-Dokumen ini membantu kita menjaga kualitas kontribusi agar perubahan tetap rapi, mudah direview, dan tidak merusak pipeline yang sudah berjalan.
+Dokumen ini membantu menjaga kualitas kontribusi agar perubahan tetap rapi, mudah direview, dan tidak merusak pipeline yang sudah berjalan.
 
 ## Prinsip Kontribusi
 
-1. Perubahan harus **jelas scope-nya** (fokus pada satu topik per PR).
+1. Perubahan harus **jelas scope-nya** (satu topik utama per PR).
 2. Perubahan harus **reproducible** (ada langkah menjalankan dan validasi).
-3. Perubahan harus **aman terhadap modul lain** (hindari regression antar Week 6 dan Week 7).
-4. Dokumentasi harus ikut diupdate jika command, path, atau behavior berubah.
+3. Perubahan harus **aman terhadap modul lain** (hindari regresi antar Week 6, Week 7, dan Week 8).
+4. Dokumentasi wajib ikut diupdate jika command, path, arsitektur, atau behavior berubah.
+5. Untuk area keamanan/privasi, jelaskan **dampak risiko dan mitigasi** pada deskripsi PR.
 
 ## Ruang Lingkup Kontribusi
 
 Kontribusi yang diterima:
 
-1. Perbaikan bug pipeline batch, streaming, analytics, dashboard, atau alert.
-2. Peningkatan kualitas model traffic (fitur, evaluasi, pelatihan, inferensi).
-3. Peningkatan UX/dashboard visual untuk observability dan prediksi.
-4. Peningkatan kualitas data pipeline (cleaning, validasi skema, data quality checks).
-5. Refactor kode agar lebih maintainable tanpa mengubah behavior secara tidak sengaja.
-6. Peningkatan dokumentasi (`README.md`, `CONTRIBUTING.md`, troubleshooting, runbook).
+1. Bug fix pipeline batch, streaming, analytics, dashboard, atau alert.
+2. Peningkatan kualitas implementasi Week 8 (fraud detection, security transform, observability).
+3. Peningkatan kualitas model traffic Week 7 (fitur, evaluasi, pelatihan, inferensi).
+4. Peningkatan UX/dashboard visual untuk monitoring dan analitik.
+5. Peningkatan kualitas data pipeline (validasi skema, data quality checks, robust error handling).
+6. Refactor kode agar lebih maintainable tanpa mengubah behavior secara tidak sengaja.
+7. Peningkatan dokumentasi (`README.md`, `CONTRIBUTING.md`, troubleshooting, runbook).
 
 ## Area Project yang Umum Diubah
 
 1. `scripts/`
-   - Week 6: batch/streaming generator & processing.
+   - Week 8: `kafka_producer_bank.py`, `spark_streaming_fraud_v2.py`.
    - Week 7: `traffic_data_cleaning_v1.py`.
-2. `analytics/`
-   - Week 6: analytics transportation.
-   - Week 7: `traffic_ml_model_v1.py`.
-3. `dashboard/`
-   - Week 6: dashboard e-commerce & transportation.
+   - Week 6: batch/streaming dan transportation generator/consumer.
+2. `dashboard/`
+   - Week 8: `fraud_dashboard_v2.py`.
    - Week 7: `traffic_dashboard_v1.py`.
-4. `models/`
-   - Artifact model (`traffic_model_v1.pkl`) bila ada update baseline model.
-5. `data/`
-   - `raw/`, `clean/`, `serving/`, `curated/`, `checkpoints/`.
-6. `alerts/`
-   - Rule-based alert transportation (Week 6).
+   - Week 6: dashboard e-commerce dan transportation.
+3. `analytics/`
+   - Week 7: `traffic_ml_model_v1.py`.
+   - Week 6: `transportation_analytics.py`.
+4. `alerts/`
+   - Rule-based alert transportation.
+5. `data/`, `stream_data/`, `models/`
+   - Data source/output, checkpoint, dan artifact model.
+6. Dokumentasi
+   - `README.md`, `CONTRIBUTING.md`.
 
 ## Setup Development
 
@@ -66,7 +71,7 @@ python -m venv .venv
 ### 2) Install Dependency
 
 ```bash
-pip install pandas scikit-learn joblib streamlit matplotlib pyspark pyarrow
+pip install pyspark kafka-python streamlit pandas pyarrow scikit-learn joblib matplotlib
 ```
 
 ### 3) Validasi Environment
@@ -76,11 +81,13 @@ python --version
 pip --version
 ```
 
-Opsional untuk pipeline Spark Week 6:
+Untuk pipeline Spark/Kafka:
 
 ```bash
 java -version
 ```
+
+Pastikan broker Kafka dapat diakses di `localhost:9092` saat validasi Week 8.
 
 ## Alur Kontribusi (Workflow)
 
@@ -94,29 +101,41 @@ java -version
 
 Contoh pola nama branch:
 
-- `feature/traffic-model-evaluation`
-- `fix/dashboard-traffic-empty-data`
-- `docs/update-week7-contributing`
+- `feature/week8-fraud-rule-tuning`
+- `fix/week8-streaming-parquet-read`
+- `docs/update-week8-contributing`
+- `refactor/spark-streaming-structure`
 
 ## Standar Penulisan Kode
 
-1. Gunakan Python yang readable dan konsisten.
+1. Gunakan Python yang readable, konsisten, dan minim side effect tersembunyi.
 2. Gunakan nama variabel/fungsi yang deskriptif.
-3. Hindari hardcode path atau nilai threshold tanpa alasan jelas.
+3. Hindari hardcode path, topic, threshold, atau endpoint tanpa alasan jelas.
 4. Tambahkan komentar singkat hanya untuk logika yang tidak langsung obvious.
-5. Hindari perubahan lintas modul yang tidak diperlukan oleh scope.
+5. Hindari perubahan lintas modul yang tidak diperlukan oleh scope PR.
 6. Jika menambah dependency baru, jelaskan alasan dan dampaknya di PR.
 
-## Standar Data, Model, dan Artifact
+## Standar Keamanan dan Privasi Data
 
-1. Jangan commit kredensial, data sensitif, atau informasi personal.
-2. Hindari commit file temporary/eksperimen lokal yang tidak dibutuhkan.
-3. Jika mengubah dataset atau preprocessing, jelaskan skema dan dampaknya.
-4. Jika mengubah model (`traffic_model_v1.pkl`), sertakan:
+1. Jangan commit kredensial, token, password, key, atau rahasia lainnya.
+2. Jangan commit data nasabah nyata atau data sensitif produksi.
+3. Pertahankan prinsip masking untuk data sensitif di layer output/monitoring.
+4. Jika mengubah rule fraud atau transform keamanan, wajib jelaskan:
+   - alasan perubahan,
+   - dampak false positive/false negative,
+   - dampak operasional dashboard.
+5. Jika menambah mekanisme enkripsi baru, dokumentasikan asumsi key management dan batasan implementasi.
+
+## Standar Data dan Artifact
+
+1. Hindari commit file output besar hasil streaming yang tidak diperlukan review.
+2. Hindari commit file temporary/eksperimen lokal.
+3. Jika mengubah skema data, jelaskan perubahan kolom dan kompatibilitas downstream.
+4. Jika mengubah artifact model (`models/traffic_model_v1.pkl`), sertakan:
    - perubahan fitur/algoritma,
    - cara training,
    - hasil validasi ringkas.
-5. Jaga kompatibilitas path agar dashboard dan script lain tidak rusak.
+5. Jaga kompatibilitas path agar script/dashboard lain tidak rusak.
 
 ## Quality Gate Sebelum Pull Request
 
@@ -126,7 +145,29 @@ Lakukan pengecekan minimal ini:
 2. Command utama untuk area yang diubah berhasil dijalankan.
 3. Output penting terbentuk di path yang diharapkan.
 4. Dashboard tetap bisa dibuka tanpa crash.
-5. Dokumen terkait sudah diupdate jika command/path berubah.
+5. Dokumentasi terkait sudah diupdate jika command/path berubah.
+
+### Validasi Minimal Week 8 (Jika Mengubah Fraud Streaming/Security)
+
+Jalankan pada 3 terminal terpisah:
+
+```bash
+# Terminal 1
+python scripts/kafka_producer_bank.py
+
+# Terminal 2
+python scripts/spark_streaming_fraud_v2.py
+
+# Terminal 3
+streamlit run dashboard/fraud_dashboard_v2.py
+```
+
+Checklist hasil:
+
+1. Producer menulis event transaksi secara kontinu.
+2. Folder `stream_data/realtime_output/` menghasilkan file parquet valid.
+3. Dashboard menampilkan `Total Transaksi` dan `Total Fraud`.
+4. Kolom `status`, `rekening_masked`, dan `jumlah_encrypted` tersedia di output data.
 
 ### Validasi Minimal Week 7 (Jika Mengubah ML Traffic)
 
@@ -140,9 +181,9 @@ Checklist hasil:
 
 1. `data/clean/traffic_smartcity_clean_v1.csv` terbentuk.
 2. `models/traffic_model_v1.pkl` terbentuk.
-3. Dashboard menampilkan KPI, trend, dan prediksi.
+3. Dashboard traffic berjalan normal.
 
-### Validasi Minimal Week 6 (Jika Mengubah Streaming/Transportation)
+### Validasi Minimal Week 6 (Jika Mengubah Transportation/Streaming Lama)
 
 1. Generator tetap menghasilkan data valid.
 2. Streaming consumer tetap menulis data ke serving layer.
@@ -161,9 +202,9 @@ Gunakan format berikut:
 
 Contoh:
 
-- `feat: add traffic model evaluation metrics section`
-- `fix: handle empty clean traffic dataset in dashboard`
-- `docs: update contributing guide for week 7`
+- `feat: add stricter fraud rule for high-value overseas transactions`
+- `fix: skip empty parquet files in fraud dashboard reader`
+- `docs: update contributing guide for week 8 workflow`
 
 ## Pull Request Checklist
 
@@ -172,9 +213,10 @@ Saat membuka PR, sertakan:
 1. Ringkasan perubahan.
 2. Area/folder yang terdampak.
 3. Langkah verifikasi yang dijalankan.
-4. Screenshot untuk perubahan visual dashboard.
-5. Risiko, asumsi, atau dampak kompatibilitas (jika ada).
-6. Catatan follow-up task (jika perubahan bertahap).
+4. Screenshot untuk perubahan visual dashboard (jika ada).
+5. Risiko, asumsi, atau dampak kompatibilitas.
+6. Khusus perubahan keamanan/privasi: dampak risiko dan mitigasi.
+7. Catatan follow-up task (jika perubahan bertahap).
 
 ## Pelaporan Bug dan Permintaan Fitur
 
@@ -184,8 +226,8 @@ Agar issue cepat diproses, sertakan:
 2. Langkah reproduksi.
 3. Perilaku yang diharapkan vs aktual.
 4. Log error relevan (jika ada).
-5. Environment singkat (OS, versi Python, dependency utama).
+5. Environment singkat (OS, versi Python, versi Spark/Kafka, dependency utama).
 
 ---
 
-Dengan mengikuti panduan ini, kontribusi akan lebih konsisten, proses review lebih cepat, dan kualitas sistem Week 6 + Week 7 tetap terjaga.
+Dengan mengikuti panduan ini, kontribusi akan lebih konsisten, proses review lebih cepat, dan kualitas sistem lintas Week 6 + Week 7 + Week 8 tetap terjaga.
